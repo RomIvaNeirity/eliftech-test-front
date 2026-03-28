@@ -1,13 +1,14 @@
 "use client";
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, Box } from "@mui/material";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
 import { changeQuantity, clearCart } from "@/store/cartSlice";
 import { useCreateOrderMutation } from "@/store/api";
-import { Header } from "@/components/Header";
-import { CartItemList } from "@/components/CartItemList";
+import { Header } from "@/components/Header/Header";
+import { CartItemList } from "@/components/CarItemList/CartItemList";
 import { CartForm } from "@/components/CartForm";
+import { cartStyles as s } from "./page.styles";
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ export default function CartPage() {
       }).unwrap();
       alert("Success!");
       dispatch(clearCart());
-      window.location.href = "/"; // або router.push('/')
+      window.location.href = "/";
     } catch {
       alert("Error!");
     }
@@ -46,23 +47,38 @@ export default function CartPage() {
   return (
     <>
       <Header />
-      <Container maxWidth="xl">
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 5 }}>
-            <CartForm formData={formData} onChange={setFormData} />
+      <Container maxWidth="desktop" sx={s.container}>
+        <Grid container spacing={3} sx={s.gridContainer}>
+          {/* Форма замовлення - зліва */}
+          <Grid size={{ xs: 12, tablet: 4 }}>
+            <Box sx={s.formWrapper}>
+              <CartForm formData={formData} onChange={setFormData} />
+            </Box>
           </Grid>
-          <Grid size={{ xs: 12, md: 7 }}>
-            <CartItemList
-              items={cartItems}
-              onQtyChange={(id, delta) =>
-                dispatch(changeQuantity({ id, delta }))
-              }
-              onRemove={(id) => dispatch(changeQuantity({ id, delta: -999 }))}
-              total={totalPrice}
-              isValid={!!(formData.name && formData.email && cartItems.length)}
-              onSubmit={handleOrderSubmit}
-              isSubmitting={isLoading}
-            />
+
+          {/* Список товарів - справа */}
+          <Grid size={{ xs: 12, tablet: 8 }}>
+            <Box sx={s.listWrapper}>
+              <CartItemList
+                items={cartItems}
+                onQtyChange={(id, delta) =>
+                  dispatch(changeQuantity({ id, delta }))
+                }
+                onRemove={(id) => dispatch(changeQuantity({ id, delta: -999 }))}
+                total={totalPrice}
+                isValid={
+                  !!(
+                    formData.name &&
+                    formData.email &&
+                    formData.phone &&
+                    formData.address &&
+                    cartItems.length
+                  )
+                }
+                onSubmit={handleOrderSubmit}
+                isSubmitting={isLoading}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Container>

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import {
   Container,
-  Grid, // Імпортуємо Grid2 для підтримки пропса size
+  Grid,
   Paper,
   TextField,
   Button,
@@ -16,14 +16,14 @@ import {
 } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/Header/Header";
 import { useLazyGetOrderHistoryQuery } from "@/store/api";
+import { historyStyles as s } from "./page.styles"; // Імпортуємо стилі
 import type { Order, OrderItem } from "@/types/types";
 
 export default function HistoryPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-
   const [trigger, { data: orders, isLoading }] = useLazyGetOrderHistoryQuery();
 
   const handleSearch = () => {
@@ -38,24 +38,17 @@ export default function HistoryPage() {
     <>
       <Header />
 
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ fontWeight: "bold", mb: 4 }}
-        >
+      <Container maxWidth="desktop" sx={s.container}>
+        <Typography variant="h4" sx={s.pageTitle}>
           Order History
         </Typography>
 
         <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Find my orders
-              </Typography>
-              <Box
-                sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}
-              >
+          {/* Ліва колонка: Пошук */}
+          <Grid size={{ xs: 12, tablet: 4 }}>
+            <Paper elevation={3} sx={s.searchPaper}>
+              <Typography variant="h6">Find my orders</Typography>
+              <Box sx={s.searchBox}>
                 <TextField
                   label="Email"
                   fullWidth
@@ -73,6 +66,7 @@ export default function HistoryPage() {
                   size="large"
                   onClick={handleSearch}
                   disabled={isLoading}
+                  sx={{ bgcolor: "#2c3e50" }}
                 >
                   {isLoading ? "Searching..." : "Search"}
                 </Button>
@@ -80,23 +74,13 @@ export default function HistoryPage() {
             </Paper>
           </Grid>
 
-          <Grid size={{ xs: 12, md: 8 }}>
+          {/* Права колонка: Результати */}
+          <Grid size={{ xs: 12, tablet: 8 }}>
             {orders && orders.length > 0 ? (
               orders.map((order: Order) => (
-                <Accordion
-                  key={order.id}
-                  sx={{ mb: 2, borderRadius: 2, boxShadow: 2 }}
-                >
+                <Accordion key={order.id} sx={s.accordion}>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        pr: 2,
-                        alignItems: "center",
-                      }}
-                    >
+                    <Box sx={s.accordionSummary}>
                       <Box>
                         <Typography sx={{ fontWeight: "bold" }}>
                           Order created
@@ -105,11 +89,7 @@ export default function HistoryPage() {
                           {new Date(order.createdAt).toLocaleDateString()}
                         </Typography>
                       </Box>
-                      <Typography
-                        variant="h6"
-                        color="primary.main"
-                        sx={{ fontWeight: "bold" }}
-                      >
+                      <Typography variant="h6" sx={s.orderTotal}>
                         {order.totalPrice} ₴
                       </Typography>
                     </Box>
@@ -118,24 +98,12 @@ export default function HistoryPage() {
                     <Divider sx={{ mb: 2 }} />
                     <Grid container spacing={2}>
                       {order.items.map((item: OrderItem) => (
-                        <Grid
-                          key={item.id}
-                          size={{ xs: 12 }} // Виправили тут: прибрали item, додали size
-                          sx={{
-                            display: "flex",
-                            gap: 2,
-                            alignItems: "center",
-                          }}
-                        >
+                        <Grid key={item.id} size={{ xs: 12 }} sx={s.itemRow}>
                           <Avatar
                             src={item.product?.image}
                             alt={item.product?.name}
-                            sx={{
-                              width: 70,
-                              height: 60,
-                              objectFit: "cover",
-                              borderRadius: 8,
-                            }}
+                            variant="rounded"
+                            sx={s.productAvatar}
                           />
                           <Box sx={{ flexGrow: 1 }}>
                             <Typography variant="subtitle2">
@@ -159,14 +127,7 @@ export default function HistoryPage() {
                 No orders found for this contact information.
               </Typography>
             ) : (
-              <Box
-                sx={{
-                  p: 5,
-                  textAlign: "center",
-                  border: "2px dashed #ccc",
-                  borderRadius: 4,
-                }}
-              >
+              <Box sx={s.emptyState}>
                 <Typography color="textSecondary">
                   Enter your details to see your previous orders
                 </Typography>

@@ -3,9 +3,10 @@
 import { Container, Grid, CircularProgress, Box } from "@mui/material";
 import { useState } from "react";
 import { useGetShopsQuery, useGetProductsByShopQuery } from "@/store/api";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/Header/Header";
 import { ShopList } from "@/components/ShopList";
 import { ProductList } from "@/components/ProductList";
+import { homeStyles as s } from "./page.styles";
 
 export default function HomePage() {
   // Отримуємо дані магазинів
@@ -31,16 +32,18 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <Container maxWidth="xl">
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <ShopList
-              shops={shops || []}
-              selectedId={currentShopId} // Передаємо актуальний ID
-              onSelect={setSelectedShopId}
-            />
+      <Container maxWidth="desktop" sx={s.mainContainer}>
+        <Grid container spacing={3} sx={s.gridContainer}>
+          <Grid size={{ xs: 12, tablet: 3 }}>
+            <Box sx={s.shopSection}>
+              <ShopList
+                shops={shops || []}
+                selectedId={currentShopId} // Передаємо актуальний ID
+                onSelect={setSelectedShopId}
+              />
+            </Box>
           </Grid>
-          <Grid size={{ xs: 12, md: 9 }}>
+          <Grid size={{ xs: 12, tablet: 9 }}>
             <ProductList products={products} isLoading={productsLoading} />
           </Grid>
         </Grid>

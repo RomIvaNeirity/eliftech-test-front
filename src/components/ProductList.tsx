@@ -1,4 +1,3 @@
-// src/components/ProductList.tsx
 import { Grid, Typography, Paper } from "@mui/material";
 import { Product } from "@/types/types";
 import { ProductItem } from "./ProductItem";
@@ -15,7 +14,16 @@ export const ProductList = ({ products, isLoading }: ProductListProps) => (
     ) : (
       <Grid container spacing={3}>
         {products?.map((product) => (
-          <Grid size={{ xs: 12, md: 4, lg: 4 }} key={product.id}>
+          // Використовуємо твої кастомні брейкпоїнти
+          <Grid
+            key={product.id}
+            size={{
+              xs: 12, // До 425px - один в ряд
+              mobile: 6, // Від 425px - два в ряд (опціонально)
+              tablet: 4, // Від 768px - два в ряд (коли з'являються шопи зліва)
+              desktop: 4, // Від 1440px - три в ряд
+            }}
+          >
             <ProductItem product={product} />
           </Grid>
         ))}

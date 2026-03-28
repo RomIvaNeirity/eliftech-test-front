@@ -15,7 +15,7 @@ interface ShopListProps {
 
 export const ShopList = ({ shops, selectedId, onSelect }: ShopListProps) => (
   <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
-    <Typography variant="h6" gutterBottom align="center">
+    <Typography variant="h6" gutterBottom align="left">
       Shops:
     </Typography>
     <List>
