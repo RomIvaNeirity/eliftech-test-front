@@ -8,8 +8,8 @@ export const historyStyles: Record<string, SxProps<Theme>> = {
   pageTitle: {
     fontWeight: "bold",
     mb: 4,
-    // На мобілці заголовок буде трохи меншим і по центру
-    fontSize: { xs: "1.8rem", mobile: "2.125rem" },
+
+    fontSize: { xs: "1.5rem", mobile: "2.125rem" },
     textAlign: { xs: "center", mobile: "left" },
   },
   searchPaper: {

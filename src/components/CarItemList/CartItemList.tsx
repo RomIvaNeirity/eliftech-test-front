@@ -47,7 +47,6 @@ export const CartItemList = ({
         <Box sx={{ mt: 2, maxHeight: "60vh", overflowY: "auto", pr: 1 }}>
           {items.map((item) => (
             <Card key={item.id} variant="outlined" sx={s.card}>
-              {/* 1. Зображення */}
               <Avatar
                 src={item.image}
                 alt={item.name}
@@ -55,7 +54,6 @@ export const CartItemList = ({
                 sx={s.avatar}
               />
 
-              {/* 2. Назва та ціна (впадуть вниз на екранах < 425px) */}
               <Box sx={s.infoBox}>
                 <Typography variant="subtitle2" sx={s.productName}>
                   {item.name}
@@ -65,7 +63,6 @@ export const CartItemList = ({
                 </Typography>
               </Box>
 
-              {/* 3. Кількість (прилипне вправо на мобільці) */}
               <TextField
                 type="number"
                 size="small"
@@ -76,7 +73,6 @@ export const CartItemList = ({
                 }
               />
 
-              {/* 4. Видалення */}
               <IconButton
                 color="error"
                 onClick={() => onRemove(item.id)}
@@ -96,7 +92,7 @@ export const CartItemList = ({
           <Button
             variant="contained"
             color="success"
-            sx={s.submitButton} // Наш новий стиль з відступом
+            sx={s.submitButton}
             disabled={!isValid || isSubmitting}
             onClick={onSubmit}
           >

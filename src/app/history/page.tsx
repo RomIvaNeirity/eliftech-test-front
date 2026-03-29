@@ -39,24 +39,25 @@ export default function HistoryPage() {
       <Header />
 
       <Container maxWidth="desktop" sx={s.container}>
-        <Typography variant="h4" sx={s.pageTitle}>
+        <Typography variant="h5" sx={s.pageTitle}>
           Order History
         </Typography>
 
         <Grid container spacing={4}>
-          {/* Ліва колонка: Пошук */}
           <Grid size={{ xs: 12, tablet: 4 }}>
             <Paper elevation={3} sx={s.searchPaper}>
               <Typography variant="h6">Find my orders</Typography>
               <Box sx={s.searchBox}>
                 <TextField
                   label="Email"
+                  required={true}
                   fullWidth
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
                   label="Phone"
+                  required={true}
                   fullWidth
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -74,7 +75,6 @@ export default function HistoryPage() {
             </Paper>
           </Grid>
 
-          {/* Права колонка: Результати */}
           <Grid size={{ xs: 12, tablet: 8 }}>
             {orders && orders.length > 0 ? (
               orders.map((order: Order) => (
