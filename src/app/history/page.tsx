@@ -18,12 +18,18 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Header } from "@/components/Header/Header";
 import { useLazyGetOrderHistoryQuery } from "@/store/api";
-import { historyStyles as s } from "./page.styles"; // Імпортуємо стилі
-import type { Order, OrderItem } from "@/types/types";
+import { historyStyles as s } from "./page.styles";
+import type { Order, OrderItem, CartItem } from "@/types/types"; // Додано CartItem
+import { useAppDispatch } from "@/store/hooks"; // Хук для Redux
+import { reorder } from "@/store/cartSlice"; // Твій новий редюсер
+import { useRouter } from "next/navigation"; // Для переходу на кошик
 
 export default function HistoryPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const [trigger, { data: orders, isLoading }] = useLazyGetOrderHistoryQuery();
 
   const handleSearch = () => {
@@ -34,10 +40,29 @@ export default function HistoryPage() {
     }
   };
 
+  const handleReorder = (order: Order) => {
+    // Формуємо масив товарів
+    const items = order.items
+      .map((i) => (i.product ? { ...i.product, quantity: i.quantity } : null))
+      .filter((i): i is CartItem => i !== null);
+
+    // Отримуємо shopId (зверни увагу, де саме він лежить у твоєму типі Order)
+    const targetShopId = order.shopId || order.items[0]?.product?.shopId;
+
+    if (!targetShopId) {
+      alert("Error: Shop information is missing for this order.");
+      return;
+    }
+
+    // Викликаємо реордер
+    dispatch(reorder({ items, shopId: Number(targetShopId) }));
+
+    // Після успішного додавання перенаправляємо в кошик
+    router.push("/cart");
+  };
   return (
     <>
       <Header />
-
       <Container maxWidth="desktop" sx={s.container}>
         <Typography variant="h5" sx={s.pageTitle}>
           Order History
@@ -50,14 +75,14 @@ export default function HistoryPage() {
               <Box sx={s.searchBox}>
                 <TextField
                   label="Email"
-                  required={true}
+                  required
                   fullWidth
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <TextField
                   label="Phone"
-                  required={true}
+                  required
                   fullWidth
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -83,7 +108,7 @@ export default function HistoryPage() {
                     <Box sx={s.accordionSummary}>
                       <Box>
                         <Typography sx={{ fontWeight: "bold" }}>
-                          Order created
+                          Order #{order.id?.toString().slice(-5)}
                         </Typography>
                         <Typography variant="caption" color="textSecondary">
                           {new Date(order.createdAt).toLocaleDateString()}
@@ -119,6 +144,22 @@ export default function HistoryPage() {
                         </Grid>
                       ))}
                     </Grid>
+                    {/* Кнопка Reorder внизу деталей замовлення */}
+                    <Box
+                      sx={{
+                        mt: 3,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleReorder(order)}
+                      >
+                        Reorder this
+                      </Button>
+                    </Box>
                   </AccordionDetails>
                 </Accordion>
               ))

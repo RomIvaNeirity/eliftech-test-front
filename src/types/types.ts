@@ -27,6 +27,7 @@ export interface Order {
   phone: string;
   address: string;
   items: OrderItem[];
+  shopId: number;
   totalPrice: number;
   createdAt: string;
 }
@@ -45,4 +46,8 @@ export interface CreateOrderDto {
   address: string;
   totalPrice: number;
   items: { productId: number; quantity: number }[];
+}
+
+export interface CartItem extends Product {
+  quantity: number;
 }

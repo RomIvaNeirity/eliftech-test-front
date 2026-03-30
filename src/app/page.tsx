@@ -1,31 +1,69 @@
 "use client";
 
 import { Container, Grid, CircularProgress, Box } from "@mui/material";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useGetShopsQuery, useGetProductsByShopQuery } from "@/store/api";
 import { Header } from "@/components/Header/Header";
-import { ShopList } from "@/components/ShopList";
+import { ShopList } from "@/components/ShopList/ShopList";
 import { ProductList } from "@/components/ProductList";
 import { ProductFilters } from "@/components/ProductFilters/ProductFilters";
 import { homeStyles as s } from "./page.styles";
+import { useAppSelector } from "@/store/hooks";
 
 export default function HomePage() {
   const { data: shops, isLoading: shopsLoading } = useGetShopsQuery();
+
+  const [visibleCount, setVisibleCount] = useState(8);
+  const STEP = 6; // Скільки додаємо при кожному доскролі
+
+  const observerTarget = useRef(null);
+
+  // 1. Отримуємо дані з Redux
+  const cartShopId = useAppSelector((state) => state.cart.shopId);
+
+  // 2. Локальний стейт для ручного кліку
   const [selectedShopId, setSelectedShopId] = useState<number | null>(null);
+
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("default");
   const [ratingFilter, setRatingFilter] = useState<string>("all");
 
-  const currentShopId = selectedShopId || (shops?.length ? shops[0].id : null);
+  // 3. ОБЧИСЛЮЄМО ЄДИНИЙ ПРАВИЛЬНИЙ ID (Derived State)
+  // Пріоритет: 1. Ручний вибір -> 2. Магазин з кошика -> 3. Перший магазин зі списку
+  const activeShopId = useMemo(() => {
+    if (selectedShopId) return selectedShopId;
+    if (cartShopId) return Number(cartShopId);
+    return shops?.length ? shops[0].id : null;
+  }, [selectedShopId, cartShopId, shops]);
 
+  // 4. Запит товарів тепер залежить від activeShopId
   const { data: products, isLoading: productsLoading } =
-    useGetProductsByShopQuery(currentShopId ?? 0, { skip: !currentShopId });
+    useGetProductsByShopQuery(activeShopId ?? 0, { skip: !activeShopId });
 
   const handleShopSelect = (id: number) => {
     setSelectedShopId(id);
-    setSelectedCats([]); // Скидаємо категорії одразу при кліку
-    setSortBy("default"); // Скидаємо сортування
+    setSelectedCats([]);
+    setSortBy("default");
+    setVisibleCount(STEP);
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          // Коли бачимо низ — просто збільшуємо ліміт відображення
+          setVisibleCount((prev) => prev + STEP);
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const filteredShops = useMemo(() => {
     if (!shops) return [];
@@ -42,7 +80,6 @@ export default function HomePage() {
     ) as string[];
   }, [products]);
 
-  // 4. ФІЛЬТРАЦІЯ ТА СОРТУВАННЯ
   const displayProducts = useMemo(() => {
     if (!products) return [];
 
@@ -61,6 +98,9 @@ export default function HomePage() {
 
     return result;
   }, [products, selectedCats, sortBy]);
+  const pagedProducts = useMemo(() => {
+    return displayProducts.slice(0, visibleCount);
+  }, [displayProducts, visibleCount]);
 
   if (shopsLoading) {
     return (
@@ -79,7 +119,7 @@ export default function HomePage() {
             <Box sx={s.shopSection}>
               <ShopList
                 shops={filteredShops}
-                selectedId={currentShopId}
+                selectedId={activeShopId}
                 onSelect={handleShopSelect}
                 ratingFilter={ratingFilter}
                 onRatingChange={setRatingFilter}
@@ -96,10 +136,20 @@ export default function HomePage() {
               onSortChange={setSortBy}
             />
 
-            <ProductList
-              products={displayProducts}
-              isLoading={productsLoading}
-            />
+            <ProductList products={pagedProducts} isLoading={productsLoading} />
+            <Box
+              ref={observerTarget}
+              sx={{
+                height: "50px",
+                mt: 2,
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {displayProducts.length > visibleCount && (
+                <CircularProgress size={20} />
+              )}
+            </Box>
           </Grid>
         </Grid>
       </Container>

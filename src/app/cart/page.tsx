@@ -1,5 +1,5 @@
 "use client";
-import { Container, Grid, Box } from "@mui/material";
+import { Container, Grid, Box, Button } from "@mui/material";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
@@ -9,6 +9,7 @@ import { Header } from "@/components/Header/Header";
 import { CartItemList } from "@/components/CarItemList/CartItemList";
 import { CartForm } from "@/components/CartForm";
 import { cartStyles as s } from "./page.styles";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -44,10 +45,15 @@ export default function CartPage() {
     }
   };
 
+  const router = useRouter();
+
   return (
     <>
       <Header />
       <Container maxWidth="desktop" sx={s.container}>
+        <Button onClick={() => router.push("/")} sx={{ mt: 2 }}>
+          ← Continue Shopping
+        </Button>
         <Grid container spacing={3} sx={s.gridContainer}>
           {/* Форма замовлення - зліва */}
           <Grid size={{ xs: 12, tablet: 4 }}>
