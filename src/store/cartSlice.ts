@@ -22,12 +22,10 @@ const cartSlice = createSlice({
     addToCart: (state, action: PayloadAction<Product>) => {
       const incomingShopId = Number(action.payload.shopId);
 
-      // Якщо кошик порожній, ініціалізуємо shopId
       if (state.items.length === 0) {
         state.shopId = incomingShopId;
       }
 
-      // ПОРІВНЯННЯ: примусово до чисел
       if (state.shopId !== null && Number(state.shopId) !== incomingShopId) {
         alert("You can only add products from one shop at a time!");
         return;
@@ -50,19 +48,17 @@ const cartSlice = createSlice({
       const item = state.items.find((i) => i.id === action.payload.id);
       if (item) {
         item.quantity += action.payload.delta;
-        // Видаляємо, якщо кількість 0
         if (item.quantity <= 0) {
           state.items = state.items.filter((i) => i.id !== action.payload.id);
         }
       }
       if (state.items.length === 0) state.shopId = null;
     },
+
     clearCart: (state) => {
       state.items = [];
       state.shopId = null;
     },
-
-    //reorder
 
     reorder: (
       state,
@@ -71,12 +67,10 @@ const cartSlice = createSlice({
       const { items, shopId } = action.payload;
       const incomingShopId = Number(shopId);
 
-      // 1. Якщо кошик порожній — ініціалізуємо магазин
       if (state.items.length === 0) {
         state.shopId = incomingShopId;
       }
 
-      // 2. Якщо в кошику ВЖЕ є товари іншого магазину — блокуємо (згідно з правилами бізнес-логіки)
       if (state.shopId !== null && Number(state.shopId) !== incomingShopId) {
         alert(
           "This order contains products from a different shop than your current cart.",
@@ -84,7 +78,6 @@ const cartSlice = createSlice({
         return;
       }
 
-      // 3. Додаємо товари до існуючих (якщо ID збігається — плюсуємо кількість)
       items.forEach((newItem) => {
         const existingItem = state.items.find((item) => item.id === newItem.id);
         if (existingItem) {

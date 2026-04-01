@@ -28,7 +28,14 @@ export const ShopFilters = ({ value, onChange }: Props) => {
         <StarIcon sx={{ color: "#faaf00" }} /> Shop Rating
       </Typography>
 
-      <RadioGroup value={value} onChange={(e) => onChange(e.target.value)}>
+      <RadioGroup
+        row
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        sx={{
+          flexDirection: { xs: "row", tablet: "column" }, // Оце ключове!
+        }}
+      >
         <FormControlLabel
           value="all"
           control={<Radio size="small" color="success" />}

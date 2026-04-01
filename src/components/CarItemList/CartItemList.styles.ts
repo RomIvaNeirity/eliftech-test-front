@@ -14,22 +14,21 @@ export const cartItemStyles: Record<string, SxProps<Theme>> = {
     gap: 2,
     alignItems: "center",
   },
-  // ТВОЇ ОРИГІНАЛЬНІ РОЗМІРИ ФОТО
+
   avatar: {
     width: { xs: 60, mobile: 80 },
     height: 60,
-    borderRadius: 1, // 8px (приблизно як objectFit: cover)
+    borderRadius: 1,
     "& img": {
-      objectFit: "cover", // Гарантуємо правильне масштабування
+      objectFit: "cover",
     },
   },
   quantityField: {
-    width: 60, // Стандартна ширина з робочими стрілочками
+    width: 60,
     flexShrink: 0,
     ml: "auto",
   },
   infoBox: {
-    // На мобільці (xs) займає весь рядок і йде вниз завдяки order
     order: { xs: 3, mobile: 0 },
     flexBasis: { xs: "100%", mobile: "auto" },
     flexGrow: 1,

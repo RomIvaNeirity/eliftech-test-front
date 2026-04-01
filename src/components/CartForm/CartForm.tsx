@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
 import { Paper, Typography, Box, TextField } from "@mui/material";
 import { CartFormData } from "@/types/types";
+import { cartFormStyles as s } from "./CartForm.styles";
 
 interface CartFormProps {
   formData: CartFormData;
@@ -8,11 +11,12 @@ interface CartFormProps {
 }
 
 export const CartForm = ({ formData, onChange }: CartFormProps) => (
-  <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
-    <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
+  <Paper elevation={3} sx={s.paper}>
+    <Typography variant="h6" gutterBottom sx={s.title}>
       Delivery Contacts
     </Typography>
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, mt: 2 }}>
+
+    <Box sx={s.fieldsContainer}>
       <TextField
         label="Name"
         fullWidth
@@ -38,9 +42,9 @@ export const CartForm = ({ formData, onChange }: CartFormProps) => (
       <TextField
         label="Address"
         fullWidth
+        required
         multiline
         rows={3}
-        required
         value={formData.address}
         onChange={(e) => onChange({ ...formData, address: e.target.value })}
       />

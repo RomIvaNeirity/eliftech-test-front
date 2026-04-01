@@ -7,7 +7,7 @@ import { changeQuantity, clearCart } from "@/store/cartSlice";
 import { useCreateOrderMutation } from "@/store/api";
 import { Header } from "@/components/Header/Header";
 import { CartItemList } from "@/components/CarItemList/CartItemList";
-import { CartForm } from "@/components/CartForm";
+import { CartForm } from "@/components/CartForm/CartForm";
 import { cartStyles as s } from "./page.styles";
 import { useRouter } from "next/navigation";
 
@@ -51,7 +51,13 @@ export default function CartPage() {
     <>
       <Header />
       <Container maxWidth="desktop" sx={s.container}>
-        <Button onClick={() => router.push("/")} sx={{ mt: 2 }}>
+        <Button
+          onClick={() => router.push("/")}
+          variant="contained"
+          size="large"
+          disabled={isLoading}
+          sx={{ bgcolor: "#2c3e50", mb: 2 }}
+        >
           ← Continue Shopping
         </Button>
         <Grid container spacing={3} sx={s.gridContainer}>

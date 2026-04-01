@@ -2,20 +2,14 @@
 
 import { Provider } from "react-redux";
 import { store } from "./store";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "light", // або 'dark'
-  },
-});
+import { theme } from "@/utils/theme"; // Імпортуємо твою основну тему
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <ThemeProvider theme={darkTheme}>
-        {/* CssBaseline скидає стандартні відступи браузера */}
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
       </ThemeProvider>

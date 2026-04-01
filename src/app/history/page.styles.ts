@@ -8,7 +8,6 @@ export const historyStyles: Record<string, SxProps<Theme>> = {
   pageTitle: {
     fontWeight: "bold",
     mb: 4,
-
     fontSize: { xs: "1.5rem", mobile: "2.125rem" },
     textAlign: { xs: "center", mobile: "left" },
   },
@@ -16,7 +15,8 @@ export const historyStyles: Record<string, SxProps<Theme>> = {
     p: 3,
     borderRadius: 2,
     position: "sticky",
-    top: 20, // Картка пошуку буде "липнути" при скролі на десктопі
+    top: 20,
+    // Можна додати boxShadow: 3 тут, якщо хочеш, щоб форма пошуку теж мала тінь
   },
   searchBox: {
     display: "flex",
@@ -26,21 +26,14 @@ export const historyStyles: Record<string, SxProps<Theme>> = {
   },
   accordion: {
     mb: 2,
-    borderRadius: "12px !important", // MUI іноді скидає радіус у акордеонів
+    borderRadius: "12px !important",
     overflow: "hidden",
     boxShadow: 2,
-    "&:before": { display: "none" }, // Прибираємо стандартну лінію MUI
-  },
-  accordionSummary: {
-    display: "flex",
-    justifyContent: "space-between",
-    width: "100%",
-    pr: 2,
-    alignItems: "center",
+    "&:before": { display: "none" },
   },
   orderTotal: {
     fontWeight: "bold",
-    color: "#2c3e50", // Твій основний колір
+    color: "#2c3e50",
   },
   itemRow: {
     display: "flex",
@@ -51,13 +44,20 @@ export const historyStyles: Record<string, SxProps<Theme>> = {
   productAvatar: {
     width: 70,
     height: 60,
-    borderRadius: 2, // 8px
+    borderRadius: 2,
   },
+  // ОСЬ ТУТ ЗМІНИ: Прибрано пунктир (dashed), додано тінь та білий фон
   emptyState: {
     p: { xs: 3, mobile: 5 },
     textAlign: "center",
-    border: "2px dashed #ccc",
-    borderRadius: 4,
-    bgcolor: "rgba(0,0,0,0.02)",
+    border: "none",
+    /* borderRadius: 2, */
+    bgcolor: "background.paper",
+    /* boxShadow: 3, */
+    minHeight: "200px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
 };

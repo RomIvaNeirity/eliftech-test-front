@@ -5,38 +5,34 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useGetShopsQuery, useGetProductsByShopQuery } from "@/store/api";
 import { Header } from "@/components/Header/Header";
 import { ShopList } from "@/components/ShopList/ShopList";
-import { ProductList } from "@/components/ProductList";
+import { ProductList } from "@/components/ProductList/ProductList";
 import { ProductFilters } from "@/components/ProductFilters/ProductFilters";
 import { homeStyles as s } from "./page.styles";
 import { useAppSelector } from "@/store/hooks";
+import { RootState } from "@/store/store";
 
 export default function HomePage() {
   const { data: shops, isLoading: shopsLoading } = useGetShopsQuery();
 
   const [visibleCount, setVisibleCount] = useState(8);
-  const STEP = 6; // Скільки додаємо при кожному доскролі
+  const STEP = 6;
 
   const observerTarget = useRef(null);
 
-  // 1. Отримуємо дані з Redux
-  const cartShopId = useAppSelector((state) => state.cart.shopId);
+  const cartShopId = useAppSelector((state: RootState) => state.cart.shopId);
 
-  // 2. Локальний стейт для ручного кліку
   const [selectedShopId, setSelectedShopId] = useState<number | null>(null);
 
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("default");
   const [ratingFilter, setRatingFilter] = useState<string>("all");
 
-  // 3. ОБЧИСЛЮЄМО ЄДИНИЙ ПРАВИЛЬНИЙ ID (Derived State)
-  // Пріоритет: 1. Ручний вибір -> 2. Магазин з кошика -> 3. Перший магазин зі списку
   const activeShopId = useMemo(() => {
     if (selectedShopId) return selectedShopId;
     if (cartShopId) return Number(cartShopId);
     return shops?.length ? shops[0].id : null;
   }, [selectedShopId, cartShopId, shops]);
 
-  // 4. Запит товарів тепер залежить від activeShopId
   const { data: products, isLoading: productsLoading } =
     useGetProductsByShopQuery(activeShopId ?? 0, { skip: !activeShopId });
 
@@ -51,7 +47,6 @@ export default function HomePage() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          // Коли бачимо низ — просто збільшуємо ліміт відображення
           setVisibleCount((prev) => prev + STEP);
         }
       },

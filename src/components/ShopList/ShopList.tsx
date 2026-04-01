@@ -9,11 +9,15 @@ import {
   ListItemText,
   Box,
   Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-import { Shop } from "@/types/types";
 import { ShopFilters } from "../ShopFilters/ShopFilters";
 import { useAppSelector } from "@/store/hooks";
 import { shopListStyles as s } from "./ShopList.styles";
+import { Shop } from "@/types/types";
 
 interface ShopListProps {
   shops: Shop[];
@@ -35,19 +39,39 @@ export const ShopList = ({
 
   return (
     <Paper elevation={3} sx={s.paper}>
-      <Box>
-        <ShopFilters value={ratingFilter} onChange={onRatingChange} />
+      <Box sx={s.controlsStack}>
+        <Box sx={s.filtersWrapper}>
+          <ShopFilters value={ratingFilter} onChange={onRatingChange} />
+        </Box>
 
-        <Divider sx={{ mb: 2 }} />
+        {/* Shop Select: only on mobile */}
+        <FormControl fullWidth size="small" sx={s.mobileSelect}>
+          <InputLabel>Select Shop</InputLabel>
+          <Select
+            value={selectedId || ""}
+            label="Select Shop"
+            onChange={(e) => onSelect(Number(e.target.value))}
+          >
+            {shops.map((shop) => (
+              <MenuItem key={shop.id} value={shop.id}>
+                {shop.name} {shop.rating}★{" "}
+                {Number(cartShopId) === shop.id ? "🛒" : ""}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
 
-        <Typography variant="h6" gutterBottom align="left" sx={s.title}>
+      <Divider sx={{ my: 2, display: { xs: "none", tablet: "block" } }} />
+
+      {/* Desktop List: from 768px (tablet) */}
+      <Box sx={s.desktopList}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
           Shops:
         </Typography>
-
         <List>
           {shops.map((shop) => {
             const isSelected = selectedId === shop.id;
-            // Перевіряємо, чи є в кошику товари саме цього магазину
             const isCartShop = isCartNotEmpty && Number(cartShopId) === shop.id;
 
             return (
@@ -61,8 +85,6 @@ export const ShopList = ({
                   primary={shop.name}
                   secondary={`Rating: ${shop.rating} ★`}
                 />
-
-                {/* Зелений візок, якщо магазин в кошику */}
                 {isCartShop && (
                   <Box component="span" sx={s.cartIcon}>
                     🛒
@@ -71,17 +93,6 @@ export const ShopList = ({
               </ListItemButton>
             );
           })}
-
-          {shops.length === 0 && (
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              align="center"
-              sx={s.noShops}
-            >
-              No shops found
-            </Typography>
-          )}
         </List>
       </Box>
     </Paper>

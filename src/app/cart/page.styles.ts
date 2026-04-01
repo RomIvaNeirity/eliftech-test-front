@@ -6,15 +6,11 @@ export const cartStyles: Record<string, SxProps<Theme>> = {
     pb: 4,
   },
   gridContainer: {
-    // На мобільці робимо більший відступ між формою та списком товарів
-    rowGap: { xs: 4, tablet: 0 },
+    rowGap: { xs: 4, tablet: 0 }, // Твої оригінальні гапи повернуто
   },
   formWrapper: {
-    // Можна додати sticky, щоб форма була на місці, поки скролиш довгий список товарів
     position: { xs: "static", tablet: "sticky" },
     top: 24,
   },
-  listWrapper: {
-    // Контейнер для списку товарів
-  },
+  listWrapper: {},
 };
