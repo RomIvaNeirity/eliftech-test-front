@@ -5,7 +5,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
-  }), // Твій бекенд
+  }),
   endpoints: (builder) => ({
     getShops: builder.query<Shop[], void>({
       query: () => "/shops",

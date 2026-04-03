@@ -34,7 +34,9 @@ export default function HistoryPage() {
 
   const handleSearch = () => {
     if (email && phone) {
-      trigger({ email, phone });
+      const encodedPhone = encodeURIComponent(phone.trim());
+      const trimmedEmail = email.trim().toLowerCase();
+      trigger({ email: trimmedEmail, phone: encodedPhone });
     } else {
       alert("Enter Email and Phone to search for your orders.");
     }
